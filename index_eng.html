@@ -1,12 +1,12 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Simulador de Universos — Vida (Carbono & Alternativas) + Heatmap α×G + Friedmann</title>
+<title>Universe Simulator — Life (Carbon & Alternatives) + α×G Heatmap + Friedmann</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net"/>
 <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<meta name="description" content="Simulador educacional de universos: vida baseada em carbono e alternativas, heatmap α×G, moléculas essenciais, cosmologia com Friedmann.">
+<meta name="description" content="Educational universe simulator: carbon-based and alternative life, α×G heatmap, essential molecules, cosmology with Friedmann.">
 <style>
   :root{
     --bg:#0f1117; --fg:#e6e6eb; --muted:#9aa0a6;
@@ -64,213 +64,212 @@
 </head>
 <body>
 <header>
-  <h1>Simulador de Universos — Vida: Carbono & Alternativas</h1>
+  <h1>Universe Simulator — Life: Carbon & Alternatives</h1>
   <nav class="row">
-    <!-- Link direto ao README no GitHub e ao arquivo local -->
-    <a class="btn" href="README.md" target="_blank" rel="noopener">📘 Tutorial (README)</a>
-    <a class="btn" href="https://github.com/MarceloFortram/universos" target="_blank" rel="noopener">🧭 Repositório</a>
-    <a class="btn" href="index_eng.html" rel="noopener">🌍 English</a>
-    <button id="btnTheme" class="btn" type="button">🌗 Tema</button>
-    <button id="btnShare" class="btn" type="button">🔗 Compartilhar</button>
-    <button id="btnRun" class="btn primary" type="button">▶️ Avaliar</button>
+    <a class="btn" href="README_EN.md" target="_blank" rel="noopener">📘 Guide (README)</a>
+    <a class="btn" href="https://github.com/MarceloFortram/universos" target="_blank" rel="noopener">🧭 Repository</a>
+    <a class="btn" href="index.html" rel="noopener">🇧🇷 Português</a>
+    <button id="btnTheme" class="btn" type="button">🌗 Theme</button>
+    <button id="btnShare" class="btn" type="button">🔗 Share</button>
+    <button id="btnRun" class="btn primary" type="button">▶️ Evaluate</button>
   </nav>
 </header>
 
 <main>
-  <!-- (1) CONSTANTES -->
+  <!-- (1) CONSTANTS -->
   <section class="grid">
     <div class="card">
-      <div class="legend">1) Constantes fundamentais (ajuste fino)</div>
+      <div class="legend">1) Fundamental constants (fine-tuning)</div>
       <div class="split">
         <div>
-          <label title="Constante de estrutura fina (α ≈ 1/137)">
-            <span>α (estrutura fina)</span>
+          <label title="Fine-structure constant (α ≈ 1/137)">
+            <span>α (fine-structure)</span>
             <input id="alpha" type="number" step="0.00001" value="0.007297" />
           </label>
-          <label title="Razão massa elétron / próton (≈ 1/1836)">
+          <label title="Electron-to-proton mass ratio (≈ 1/1836)">
             <span>μ = mₑ/mₚ</span>
             <input id="mu" type="number" step="0.00001" value="0.0005446" />
           </label>
-          <label title="Diferença de massa nêutron-próton (MeV) ≈ 1.293">
+          <label title="Neutron–proton mass difference (MeV) ≈ 1.293">
             <span>Δ(mₙ−mₚ) [MeV]</span>
             <input id="dMnp" type="number" step="0.001" value="1.293" />
           </label>
-          <label title="Escala efetiva da força forte (1 = nossa)">
-            <span>Força forte (x)</span>
+          <label title="Effective strong force scale (1 = ours)">
+            <span>Strong force (x)</span>
             <input id="strong" type="number" step="0.01" value="1.00" />
           </label>
-          <label title="Escala efetiva da gravidade (1 = nossa)">
-            <span>Gravidade G (x)</span>
+          <label title="Effective gravity scale (1 = ours)">
+            <span>Gravity G (x)</span>
             <input id="Gscale" type="number" step="0.01" value="1.00" />
           </label>
         </div>
         <div>
-          <label title="Probabilidade de variação aleatória aplicada nas entradas">
-            <span>Acaso (ruído) %</span>
+          <label title="Random variation applied to inputs">
+            <span>Chance (noise) %</span>
             <input id="rng" type="number" step="1" value="0" />
           </label>
-          <label title="Puxa valores para a faixa habitável (metaparámetro educacional)">
-            <span>Direcionamento (“Deus”) %</span>
+          <label title="Pulls values toward the habitable range (educational meta-parameter)">
+            <span>Directionality (“God”) %</span>
             <input id="bias" type="number" step="1" value="0" />
           </label>
-          <label title="Quão estreitas são as janelas de ajuste fino (0 = tolerante, 1 = muito estrito)">
-            <span>Sensibilidade (0–1)</span>
+          <label title="How narrow the fine-tuning windows are (0 = tolerant, 1 = very strict)">
+            <span>Sensitivity (0–1)</span>
             <input id="tight" type="number" step="0.05" value="0.7" />
           </label>
           <div class="notice">
-            Estas janelas são <b>heurísticas plausíveis</b> para ensino. Não substituem química quântica real.
+            These windows are <b>plausible heuristics</b> for teaching. They do not replace ab-initio quantum chemistry.
           </div>
         </div>
       </div>
     </div>
 
-    <!-- (2) COSMOLOGIA + FRIEDMANN -->
+    <!-- (2) COSMOLOGY + FRIEDMANN -->
     <div class="card">
-      <div class="legend">2) Cosmologia mínima + Friedmann</div>
+      <div class="legend">2) Minimal cosmology + Friedmann</div>
       <div class="split">
         <div>
-          <label><span>Ωm (matéria)</span><input id="Om" type="number" step="0.01" value="0.30"/></label>
-          <label><span>Ωr (radiação)</span><input id="Or" type="number" step="0.0001" value="0.0001"/></label>
-          <label><span>ΩΛ (energia escura)</span><input id="OL" type="number" step="0.01" value="0.70"/></label>
+          <label><span>Ωm (matter)</span><input id="Om" type="number" step="0.01" value="0.30"/></label>
+          <label><span>Ωr (radiation)</span><input id="Or" type="number" step="0.0001" value="0.0001"/></label>
+          <label><span>ΩΛ (dark energy)</span><input id="OL" type="number" step="0.01" value="0.70"/></label>
           <label><span>H₀ (km/s/Mpc)</span><input id="H0" type="number" step="1" value="70"/></label>
         </div>
         <div>
-          <label title="Tempo efetivo útil para química/evolução">
-            <span>Tempo disponível (Gyr)</span>
+          <label title="Effective usable time for chemistry/evolution">
+            <span>Available time (Gyr)</span>
             <input id="age" type="number" step="0.5" value="14"/>
           </label>
           <div class="box" style="margin-top:.4rem">
-            <div class="k">Ωk (curvatura)</div><div id="okShow">—</div>
-            <div class="k">Checagens cosmológicas</div><div id="cosmoChk">—</div>
+            <div class="k">Ωk (curvature)</div><div id="okShow">—</div>
+            <div class="k">Cosmology checks</div><div id="cosmoChk">—</div>
             <div class="k">t(rad=mat)</div><div id="tRM">—</div>
-            <div class="k">t(Λ domina)</div><div id="tML">—</div>
-            <div class="k">Janela estruturas</div><div id="tWin">—</div>
+            <div class="k">t(Λ dominates)</div><div id="tML">—</div>
+            <div class="k">Structure window</div><div id="tWin">—</div>
           </div>
           <div class="muted small" style="margin-top:.4rem">
-            Integração RK4 de Friedmann: \( \dot a = a H(a) \), com \( H(a)=H_0\sqrt{\Omega_r a^{-4}+\Omega_m a^{-3}+\Omega_k a^{-2}+\Omega_\Lambda} \).
+            RK4 integration of Friedmann: \( \dot a = a H(a) \), with \( H(a)=H_0\sqrt{\Omega_r a^{-4}+\Omega_m a^{-3}+\Omega_k a^{-2}+\Omega_\Lambda} \).
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- (3) AMBIENTE -->
+  <!-- (3) ENVIRONMENT -->
   <section class="grid">
     <div class="card">
-      <div class="legend">3) Ambiente planetário</div>
+      <div class="legend">3) Planetary environment</div>
       <div class="split">
         <div>
-          <label><span>Temperatura superficial (K)</span><input id="T" type="number" step="1" value="288"/></label>
-          <label><span>Pressão superficial (bar)</span><input id="P" type="number" step="0.01" value="1.0"/></label>
+          <label><span>Surface temperature (K)</span><input id="T" type="number" step="1" value="288"/></label>
+          <label><span>Surface pressure (bar)</span><input id="P" type="number" step="0.01" value="1.0"/></label>
           <label>
-            <span>Solvente principal</span>
+            <span>Main solvent</span>
             <select id="solvent">
-              <option value="H2O">Água (H₂O)</option>
-              <option value="NH3">Amônia (NH₃)</option>
-              <option value="CH4">Metano (CH₄)</option>
-              <option value="C2H6">Etano (C₂H₆)</option>
-              <option value="CO2sc">CO₂ supercrítico</option>
+              <option value="H2O">Water (H₂O)</option>
+              <option value="NH3">Ammonia (NH₃)</option>
+              <option value="CH4">Methane (CH₄)</option>
+              <option value="C2H6">Ethane (C₂H₆)</option>
+              <option value="CO2sc">Supercritical CO₂</option>
             </select>
           </label>
-          <label title="Radiação estelar ionizante relativa (1 = Terra)">
-            <span>Ambiente UV/X (x)</span><input id="uv" type="number" step="0.1" value="1.0"/>
+          <label title="Ionizing stellar radiation relative to Earth">
+            <span>UV/X environment (x)</span><input id="uv" type="number" step="0.1" value="1.0"/>
           </label>
         </div>
         <div>
-          <div class="title">Janelas de líquido (1 bar, referência):</div>
+          <div class="title">Approximate liquid windows (1 bar, reference):</div>
           <div class="box">
-            <div class="k">Água</div><div>273–373 K</div>
-            <div class="k">Amônia</div><div>195–240 K</div>
-            <div class="k">Metano</div><div> 90–112 K</div>
-            <div class="k">Etano</div><div> 90–185 K</div>
-            <div class="k">CO₂ (supercrítico)</div><div> T≥304 K & P≥73 bar</div>
+            <div class="k">Water</div><div>273–373 K</div>
+            <div class="k">Ammonia</div><div>195–240 K</div>
+            <div class="k">Methane</div><div> 90–112 K</div>
+            <div class="k">Ethane</div><div> 90–185 K</div>
+            <div class="k">CO₂ (supercritical)</div><div> T≥304 K & P≥73 bar</div>
           </div>
           <div class="muted small" style="margin-top:.4rem">
-            Faixas mudam com pressão; UV alto quebra moléculas frágeis (penalizado).
+            Ranges shift with pressure; high UV breaks fragile molecules (penalized).
           </div>
         </div>
       </div>
     </div>
 
-    <!-- (4) RESULTADO -->
+    <!-- (4) RESULTS -->
     <div class="card">
-      <div class="legend">4) Resultado & Diagnóstico</div>
+      <div class="legend">4) Result & Diagnostics</div>
       <div class="row" style="margin-bottom:.5rem">
-        <span id="lifeC" class="pill">Carbono: —</span>
-        <span id="lifeAlt" class="pill">Vida alternativa: —</span>
+        <span id="lifeC" class="pill">Carbon-based: —</span>
+        <span id="lifeAlt" class="pill">Alternative life: —</span>
       </div>
       <div class="box" id="diag"></div>
       <div class="hr"></div>
-      <div class="title">Componentes (0–100)</div>
+      <div class="title">Components (0–100)</div>
       <div style="position:relative;height:320px">
         <canvas id="chartComponents"></canvas>
       </div>
       <div class="muted" style="margin-top:.5rem">
-        Subscores: Química/Átomos, Estrelas (G), Cosmologia (com Friedmann), Solvente/UV.
+        Subscores: Chemistry/Atoms, Stars (G), Cosmology (with Friedmann), Solvent/UV.
       </div>
     </div>
   </section>
 
-  <!-- (5) MOLÉCULAS + (6) a(t) -->
+  <!-- (5) MOLECULES + (6) a(t) -->
   <section class="grid" style="margin-top:1rem">
     <div class="card">
-      <div class="legend">5) Moléculas essenciais</div>
+      <div class="legend">5) Essential molecules</div>
       <div id="molecules" class="molecules"></div>
       <div class="muted small" style="margin-top:.5rem">
-        Avaliações qualitativas via heurísticas (ligação/produção de elementos e ambiente). Educacional.
+        Qualitative assessments via heuristics (bonding/element production and environment). Educational.
       </div>
     </div>
 
     <div class="card">
-      <div class="legend">6) Cosmologia detalhada — a(t)</div>
+      <div class="legend">6) Detailed cosmology — a(t)</div>
       <div style="position:relative;height:320px">
         <canvas id="chartAT"></canvas>
       </div>
       <div class="muted small" style="margin-top:.5rem">
-        a(t) normalizado a a(tf)=1; marcadores de igualdade radiação-matéria e matéria–Λ quando ocorrem.
+        a(t) normalized so that a(tf)=1; markers for radiation–matter equality and matter–Λ when they occur.
       </div>
     </div>
   </section>
 
   <!-- (7) HEATMAP -->
   <section class="card" style="margin-top:1rem">
-    <div class="legend">7) Mapa de calor α×G — Zonas habitáveis</div>
+    <div class="legend">7) α×G heatmap — Habitability zones</div>
     <div class="toolbar">
-      <label class="small"><span style="margin-right:.4rem">Resolução</span>
+      <label class="small"><span style="margin-right:.4rem">Resolution</span>
         <input id="res" type="number" step="5" min="10" max="120" value="50" />
       </label>
-      <label class="small"><span style="margin-right:.4rem">Modo</span>
+      <label class="small"><span style="margin-right:.4rem">Mode</span>
         <select id="mapMode">
-          <option value="carbon">Carbono</option>
-          <option value="alt">Vida alternativa</option>
+          <option value="carbon">Carbon-based</option>
+          <option value="alt">Alternative life</option>
         </select>
       </label>
-      <button id="btnHeat" type="button" class="btn">🗺️ Gerar mapa</button>
-      <div class="muted small">Clique/toque no mapa para aplicar α e G.</div>
+      <button id="btnHeat" type="button" class="btn">🗺️ Generate map</button>
+      <div class="muted small">Click/tap the map to apply α and G.</div>
     </div>
     <div style="position:relative; height:380px">
       <canvas id="heat" style="width:100%;height:100%;border-radius:12px;border:1px solid var(--border)"></canvas>
       <div id="heatInfo" class="pill" style="position:absolute;left:10px;top:10px">α=— • G=— • score=—</div>
     </div>
     <div class="muted small" style="margin-top:.5rem">
-      Eixo X: α (0,005 → 0,010). Eixo Y: G (0,3 → 2,0). Verde = melhor, vermelho = pior.
+      X-axis: α (0.005 → 0.010). Y-axis: G (0.3 → 2.0). Green = better, red = worse.
     </div>
   </section>
 </main>
 
 <footer>
   <div class="about">
-    <b>Sobre o Autor — Marcelo Fortran</b><br/>
-    Marcelo Fortran é <i>entusiasta de programação</i> e <i>curioso de ciência</i>. Este projeto nasce do interesse em tornar
-    ideias de cosmologia, química e habitabilidade acessíveis ao público geral por meio de um simulador interativo no navegador.
+    <b>About the Author — Marcelo Fortran</b><br/>
+    Marcelo Fortran is a <i>programming enthusiast</i> and a <i>science-curious</i> maker. This project stems from a desire
+    to make ideas from cosmology, chemistry and habitability accessible through an interactive browser simulator.
   </div>
   <div style="margin-top:.6rem">
-    📘 Leia o tutorial completo em <a href="README.md">README.md</a> • 🌍 English version: <a href="index_eng.html">index_eng.html</a>
+    📘 Read the full guide at <a href="README_EN.md">README_EN.md</a> • 🇧🇷 Versão em português: <a href="index.html">index.html</a>
   </div>
 </footer>
 
 <script>
-/* ========= Tema ========= */
+/* ========= Theme ========= */
 (function(){
   const root = document.documentElement;
   const saved = localStorage.getItem('theme') || 'dark';
@@ -289,14 +288,14 @@ function setTxt(id, txt){ $(id).textContent = txt; }
 function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
 function rnd(){ return Math.random()*2-1; }
 
-/* ========= Acaso & Direcionamento ========= */
+/* ========= Chance & Directionality ========= */
 function nudge(value, target, noisePct, biasPct){
   const v = value*(1 + (noisePct/100)*rnd());
   const b = value + (biasPct/100)*(target - value);
   return (noisePct>0 || biasPct>0) ? (0.5*v + 0.5*b) : value;
 }
 
-/* ========= Janelas (renomeado p/ evitar conflito global) ========= */
+/* ========= Windows (renamed to avoid global conflict) ========= */
 function winRange(val, center, relSpan, tight){
   const span = relSpan * (1 - 0.6*tight);
   const lo = center*(1-span), hi = center*(1+span);
@@ -305,10 +304,10 @@ function winRange(val, center, relSpan, tight){
   return clamp(1 - d*d, 0, 1);
 }
 
-/* ========= Cosmologia por Friedmann ========= */
+/* ========= Cosmology via Friedmann ========= */
 function integrateFriedmann(H0, Om, Or, OL, ageGyr, steps=600){
   const Ok = 1 - (Om+Or+OL);
-  const H0_Gyr = H0/978; // ~0.0716 Gyr^-1 para H0=70
+  const H0_Gyr = H0/978; // ~0.0716 Gyr^-1 for H0=70
   function H_of_a(a){
     const arg = Or/(a**4) + Om/(a**3) + Ok/(a**2) + OL;
     return H0_Gyr * Math.max(0, Math.sqrt(Math.max(0,arg)));
@@ -341,7 +340,7 @@ function findTimeAtA(T, A, aTarget){
   return null;
 }
 
-/* ========= Cosmologia mínima (checks estáticos) ========= */
+/* ========= Minimal cosmology (static checks) ========= */
 function cosmosChecksStatic(Om, Or, OL, ageGyr){
   const Ok = 1 - (Om+Or+OL);
   const hasMatter = Om >= 0.05 ? 1 : 0;
@@ -349,13 +348,13 @@ function cosmosChecksStatic(Om, Or, OL, ageGyr){
   const ageOK = ageGyr >= 5 ? 1 : 0;
   const score = (hasMatter + lambdaNotTooHigh + ageOK)/3;
   const notes = [];
-  if(!hasMatter) notes.push("Matéria insuficiente para formar galáxias.");
-  if(!lambdaNotTooHigh) notes.push("Energia escura muito alta: estruturas cortadas cedo.");
-  if(!ageOK) notes.push("Tempo disponível muito curto (<5 Gyr).");
+  if(!hasMatter) notes.push("Insufficient matter to form galaxies.");
+  if(!lambdaNotTooHigh) notes.push("Dark energy too high: structures cut off early.");
+  if(!ageOK) notes.push("Available time too short (<5 Gyr).");
   return {Ok, score, notes};
 }
 
-/* ========= Química atômico-nuclear ========= */
+/* ========= Atomic/nuclear chemistry ========= */
 function atomicChemScores(alpha, mu, dMnpMeV, strongScale, tight){
   const alpha0 = 1/137.035999;
   const mu0 = 1/1836.152673;
@@ -368,10 +367,10 @@ function atomicChemScores(alpha, mu, dMnpMeV, strongScale, tight){
   const sStrong= winRange(strongScale, s0, 0.05, tight);
 
   const notes=[];
-  if(sAlpha===0) notes.push("α fora do intervalo: ligações eletrônicas instáveis.");
-  if(sMu===0) notes.push("mₑ/mₚ fora do intervalo: orbitais/química alteradas demais.");
-  if(sDM===0) notes.push("Δ(mₙ−mₚ) fora do intervalo: estabilidade nuclear comprometida.");
-  if(sStrong===0) notes.push("Força forte fora do ajuste fino: carbono/oxigênio suprimidos.");
+  if(sAlpha===0) notes.push("α out of range: unstable electronic bonding.");
+  if(sMu===0) notes.push("mₑ/mₚ out of range: orbitals/chemistry too distorted.");
+  if(sDM===0) notes.push("Δ(mₙ−mₚ) out of range: nuclear stability compromised.");
+  if(sStrong===0) notes.push("Strong force off fine-tuning: carbon/oxygen suppressed.");
 
   const atomScore = 0.35*sAlpha + 0.25*sMu + 0.25*sDM + 0.15*sStrong;
   const carbonOK = (sStrong>0.25);
@@ -379,23 +378,23 @@ function atomicChemScores(alpha, mu, dMnpMeV, strongScale, tight){
   return { atomScore, carbonOK, notes, pieces:{sAlpha,sMu,sDM,sStrong} };
 }
 
-/* ========= Estrelas (gravidade) ========= */
+/* ========= Stars (gravity) ========= */
 function stellarScore(Gscale, tight){
   const sG = winRange(Gscale, 1.0, 0.5, tight);
   const notes=[];
-  if(sG===0 && Gscale>1.0) notes.push("G alto: estrelas vivem pouco (milhões de anos).");
-  if(sG===0 && Gscale<1.0) notes.push("G baixo: ignição nuclear dificultada.");
+  if(sG===0 && Gscale>1.0) notes.push("High G: short-lived stars (millions of years).");
+  if(sG===0 && Gscale<1.0) notes.push("Low G: nuclear ignition hindered.");
   return { sG, notes };
 }
 
-/* ========= Solventes & UV ========= */
+/* ========= Solvents & UV ========= */
 function solventWindow(solvent, T, P){
   let ok=0, msg=""; 
-  if(solvent==='H2O'){ ok = (T>=273 && T<=373 && P>=0.006) ? 1:0; msg="Água líquida 273–373 K @ ≥0.006 bar"; }
-  if(solvent==='NH3'){ ok = (T>=195 && T<=240) ? 1:0; msg="Amônia líquida 195–240 K @ ~1 bar"; }
-  if(solvent==='CH4'){ ok = (T>=90 && T<=112)  ? 1:0; msg="Metano líquido 90–112 K @ ~1 bar"; }
-  if(solvent==='C2H6'){ ok = (T>=90 && T<=185) ? 1:0; msg="Etano líquido 90–185 K @ ~1 bar"; }
-  if(solvent==='CO2sc'){ ok = (T>=304 && P>=73) ? 1:0; msg="CO₂ supercrítico T≥304 K & P≥73 bar"; }
+  if(solvent==='H2O'){ ok = (T>=273 && T<=373 && P>=0.006) ? 1:0; msg="Liquid water 273–373 K @ ≥0.006 bar"; }
+  if(solvent==='NH3'){ ok = (T>=195 && T<=240) ? 1:0; msg="Liquid ammonia 195–240 K @ ~1 bar"; }
+  if(solvent==='CH4'){ ok = (T>=90 && T<=112)  ? 1:0; msg="Liquid methane 90–112 K @ ~1 bar"; }
+  if(solvent==='C2H6'){ ok = (T>=90 && T<=185) ? 1:0; msg="Liquid ethane 90–185 K @ ~1 bar"; }
+  if(solvent==='CO2sc'){ ok = (T>=304 && P>=73) ? 1:0; msg="Supercritical CO₂ T≥304 K & P≥73 bar"; }
   return {ok, msg};
 }
 function uvPenalty(uv){
@@ -403,16 +402,16 @@ function uvPenalty(uv){
   return clamp(1.2 - 0.2*p, 0.6, 1);
 }
 
-/* ========= Módulo: Moléculas Essenciais (heurístico) ========= */
+/* ========= Essential molecules (heuristic) ========= */
 function moleculesAssessment(alpha, mu, strongScale, envOK, tight){
   const alpha0 = 1/137.035999, mu0 = 1/1836.152673;
   const eScale = (alpha/alpha0)**2 * (mu/mu0);
   const prodCO = winRange(strongScale, 1.0, 0.05, tight);
   const prodN  = winRange(strongScale, 1.0, 0.08, tight);
   function status(score){
-    if(score>=0.75) return {cls:'ok', txt:'estável'};
+    if(score>=0.75) return {cls:'ok', txt:'stable'};
     if(score>=0.4)  return {cls:'mid', txt:'marginal'};
-    return {cls:'bad', txt:'instável'};
+    return {cls:'bad', txt:'unstable'};
   }
   const eH2 = 13.6 * eScale;
   const sH2 = clamp( (eH2>5 && eH2<25) ? 0.9 : (eH2>3 && eH2<35 ? 0.5 : 0.0), 0, 1);
@@ -430,7 +429,7 @@ function moleculesAssessment(alpha, mu, strongScale, envOK, tight){
   };
 }
 
-/* ========= Agregação (com Friedmann) ========= */
+/* ========= Aggregation (with Friedmann) ========= */
 function evaluateAll(params){
   const {alpha, mu, dMnp, strong, Gscale, Om, Or, OL, age, T, P, solvent, uv, tight} = params;
 
@@ -445,9 +444,9 @@ function evaluateAll(params){
   const fracWin = tWin ? clamp(tWin/age, 0, 1) : 0;
   const cosScore = clamp(0.55*cosStatic.score + 0.45*fracWin, 0, 1);
   const cosNotes = [...cosStatic.notes];
-  if(t_rm==null) cosNotes.push("Igualdade radiação-matéria não atingida na janela integrada.");
-  if(t_mL==null) cosNotes.push("Domínio de Λ não atingido na janela integrada.");
-  if(tWin!=null && tWin<2) cosNotes.push("Janela de estruturas curta (<2 Gyr).");
+  if(t_rm==null) cosNotes.push("Radiation–matter equality not reached in integration window.");
+  if(t_mL==null) cosNotes.push("Λ dominance not reached in integration window.");
+  if(tWin!=null && tWin<2) cosNotes.push("Structure window is short (<2 Gyr).");
 
   const atc = atomicChemScores(alpha, mu, dMnp, strong, tight);
   const st  = stellarScore(Gscale, tight);
@@ -471,9 +470,9 @@ function evaluateAll(params){
   altScore = Math.round(clamp(altScore, 0, 100));
 
   function tag(score, carbon=false){
-    if(score>=70) return {txt: (carbon?'Carbono plausível 🌱':'Alternativa plausível ⚡'), cls:'ok'};
-    if(score>=40) return {txt: 'Marginal / incerta ⚠️', cls:'warn'};
-    return {txt:'Improvável ❌', cls:'bad'};
+    if(score>=70) return {txt: (carbon?'Carbon-based plausible 🌱':'Alternative plausible ⚡'), cls:'ok'};
+    if(score>=40) return {txt: 'Marginal / uncertain ⚠️', cls:'warn'};
+    return {txt:'Unlikely ❌', cls:'bad'};
   }
   const carbonTag = tag(carbonScore,true);
   const altTag    = tag(altScore,false);
@@ -481,9 +480,9 @@ function evaluateAll(params){
   const diag = [];
   if(atc.notes.length) diag.push(...atc.notes);
   if(st.notes.length)  diag.push(...st.notes);
-  if(!env.ok) diag.push(`Solvente fora da faixa: ${env.msg}.`);
+  if(!env.ok) diag.push(`Solvent out of range: ${env.msg}.`);
   if(cosNotes.length) diag.push(...cosNotes);
-  if(diag.length===0) diag.push("Parâmetros coerentes; química, cosmologia e ambiente plausíveis.");
+  if(diag.length===0) diag.push("Parameters consistent; chemistry, cosmology, and environment plausible.");
 
   return {
     Ok: integ.Ok,
@@ -501,9 +500,9 @@ function renderComponents(subs){
   const ctx = document.getElementById('chartComponents').getContext?.('2d');
   if(!ctx || !window.Chart) return;
   const data = {
-    labels:['Química/Átomos','Estrelas (G)','Cosmologia','Solvente/UV'],
+    labels:['Chemistry/Atoms','Stars (G)','Cosmology','Solvent/UV'],
     datasets:[{
-      label:'Componentes',
+      label:'Components',
       data:[subs.S_atoms, subs.S_stars, subs.S_cosmos, subs.S_solvent],
       borderColor:getComputedStyle(document.documentElement).getPropertyValue('--blue').trim(),
       backgroundColor:'transparent',
@@ -529,7 +528,7 @@ function renderAT(cosmo){
   const data = {
     labels: cosmo.t,
     datasets:[{
-      label:'a(t) (normalizado)',
+      label:'a(t) (normalized)',
       data: cosmo.a,
       borderColor:getComputedStyle(document.documentElement).getPropertyValue('--green').trim(),
       backgroundColor:'transparent',
@@ -540,7 +539,7 @@ function renderAT(cosmo){
   const opts = {
     responsive:true, maintainAspectRatio:false,
     scales:{
-      x:{title:{display:true,text:'Tempo (Gyr)',color:getComputedStyle(document.documentElement).getPropertyValue('--muted').trim()},
+      x:{title:{display:true,text:'Time (Gyr)',color:getComputedStyle(document.documentElement).getPropertyValue('--muted').trim()},
          ticks:{color:getComputedStyle(document.documentElement).getPropertyValue('--muted').trim()}},
       y:{title:{display:true,text:'a(t)',color:getComputedStyle(document.documentElement).getPropertyValue('--muted').trim()},
          min:0, ticks:{color:getComputedStyle(document.documentElement).getPropertyValue('--muted').trim()}}
@@ -557,7 +556,7 @@ function classifyPill(el, info){
   if(info.cls==='ok') el.classList.add('ok');
   if(info.cls==='warn') el.classList.add('warn');
   if(info.cls==='bad') el.classList.add('bad');
-  el.textContent = `${el.id==='lifeC'?'Carbono':'Vida alternativa'}: ${info.txt} — ${info.score}/100`;
+  el.textContent = `${el.id==='lifeC'?'Carbon-based':'Alternative life'}: ${info.txt} — ${info.score}/100`;
 }
 function renderMolecules(mod){
   const cont = document.getElementById('molecules'); cont.innerHTML='';
@@ -570,7 +569,7 @@ function renderMolecules(mod){
   }
 }
 
-/* ========= Estado/Leitura ========= */
+/* ========= State/Reading ========= */
 function currentParams(applyNoiseBias=true){
   const targets = { alpha:0.00729735, mu:1/1836.152673, dMnp:1.293, strong:1.0, Gscale:1.0,
                     Om:0.30, Or:0.0001, OL:0.70, age:14, T:288, P:1.0, uv:1.0 };
@@ -607,20 +606,20 @@ function currentParams(applyNoiseBias=true){
   }
 
   const Ok = 1 - (Om+Or+OL);
-  setTxt('#okShow', Ok.toFixed(6).replace('.',','));
+  setTxt('#okShow', Ok.toFixed(6));
 
   return {alpha,mu,dMnp,strong,Gscale:Gs,Om,Or,OL,age,T,P,solvent,uv,tight};
 }
 
-/* ========= Rodar avaliação ========= */
+/* ========= Run evaluation ========= */
 function run(){
   const p = currentParams(true);
   const res = evaluateAll(p);
 
-  setTxt('#cosmoChk', res.subs.S_cosmos>=67?'OK':'Limitações (veja diagnóstico)');
-  setTxt('#tRM', res.cosmo.t_rm!=null? (res.cosmo.t_rm.toFixed(2).replace('.',',')+' Gyr'):'—');
-  setTxt('#tML', res.cosmo.t_mL!=null? (res.cosmo.t_mL.toFixed(2).replace('.',',')+' Gyr'):'—');
-  setTxt('#tWin', res.cosmo.tWin!=null? (res.cosmo.tWin.toFixed(2).replace('.',',')+' Gyr'):'—');
+  setTxt('#cosmoChk', res.subs.S_cosmos>=67?'OK':'Limitations (see diagnostics)');
+  setTxt('#tRM', res.cosmo.t_rm!=null? (res.cosmo.t_rm.toFixed(2)+' Gyr'):'—');
+  setTxt('#tML', res.cosmo.t_mL!=null? (res.cosmo.t_mL.toFixed(2)+' Gyr'):'—');
+  setTxt('#tWin', res.cosmo.tWin!=null? (res.cosmo.tWin.toFixed(2)+' Gyr'):'—');
 
   classifyPill(document.getElementById('lifeC'), res.carbon);
   classifyPill(document.getElementById('lifeAlt'), res.alt);
@@ -636,7 +635,7 @@ function run(){
   renderMolecules(mol);
 }
 
-/* ========= Compartilhar estado ========= */
+/* ========= Share state ========= */
 function encodeState(){
   const ids=['alpha','mu','dMnp','strong','Gscale','Om','Or','OL','H0','age','T','P','solvent','uv','rng','bias','tight'];
   const s={}; ids.forEach(id=> s[id]=document.getElementById(id).value);
@@ -651,11 +650,11 @@ function decodeState(q){
 document.getElementById('btnShare').addEventListener('click', ()=>{
   const url = `${location.origin}${location.pathname}#${encodeState()}`;
   navigator.clipboard?.writeText(url);
-  alert('Link copiado! Cole para compartilhar seu cenário.');
+  alert('Link copied! Paste it to share your scenario.');
 });
 if(location.hash?.length>1){ decodeState(location.hash.slice(1)); }
 
-/* ========= Heatmap α×G ========= */
+/* ========= α×G Heatmap ========= */
 function colorForScore(score){
   const h = (120*clamp(score,0,100))/100; // 0..120 (red->green)
   return `hsl(${h}deg 80% 50%)`;
@@ -694,9 +693,9 @@ function drawHeatmap(){
   ctx.beginPath(); ctx.moveTo(mL, mT); ctx.lineTo(mL, mT+plotH); ctx.lineTo(mL+plotW, mT+plotH); ctx.stroke();
   ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--muted').trim();
   ctx.font = `${12*dpr}px system-ui, sans-serif`;
-  ctx.textAlign='center'; ctx.fillText('α (estrutura fina)', mL+plotW/2, H-14*dpr);
+  ctx.textAlign='center'; ctx.fillText('α (fine-structure)', mL+plotW/2, H-14*dpr);
   ctx.save(); ctx.translate(14*dpr, mT+plotH/2); ctx.rotate(-Math.PI/2);
-  ctx.fillText('G (escala relativa)', 0, 0); ctx.restore();
+  ctx.fillText('G (relative scale)', 0, 0); ctx.restore();
   ctx.textAlign='center';
   for(let i=0;i<=3;i++){
     const x = mL + i*(plotW/3);
@@ -721,12 +720,12 @@ function drawHeatmap(){
     document.getElementById('alpha').value = a.toFixed(6);
     document.getElementById('Gscale').value = g.toFixed(3);
     run();
-    document.getElementById('heatInfo').textContent = `α=${a.toFixed(6)} • G=${g.toFixed(3)} • aplicado`;
+    document.getElementById('heatInfo').textContent = `α=${a.toFixed(6)} • G=${g.toFixed(3)} • applied`;
   };
 }
 document.getElementById('btnHeat').addEventListener('click', drawHeatmap);
 
-/* ========= Eventos ========= */
+/* ========= Events ========= */
 document.getElementById('btnRun').addEventListener('click', run);
 ['alpha','mu','dMnp','strong','Gscale','Om','Or','OL','H0','age','T','P','solvent','uv','rng','bias','tight','res','mapMode']
   .forEach(id=> document.getElementById(id).addEventListener('input', ()=>{}));
