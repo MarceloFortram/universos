@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Simulador Educacional de Viabilidade da Vida (Carbono & Alternativas)</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net"/>
+<script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  :root{
+    --bg:#0f1117; --fg:#e6e6eb; --muted:#9aa0a6;
+    --card:#151924; --border:#2a2f3b;
+    --blue:#6c90ff; --red:#ff6b6b; --green:#10b981; --amber:#f59e0b; --violet:#a78bfa;
+  }
+  [data-theme="light"]{
+    --bg:#f7f8fb; --fg:#14161c; --muted:#4b5563;
+    --card:#ffffff; --border:#e5e7eb;
+    --blue:#3853d8; --red:#d43f3f; --green:#0c8d6a; --amber:#b27208; --violet:#6b46c1;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+  header{position:sticky;top:0;z-index:10;background:var(--card);border-bottom:1px solid var(--border);padding:.9rem 1rem;display:flex;gap:.75rem;align-items:center;justify-content:space-between}
+  h1{margin:0;font-size:clamp(1rem,2.4vw,1.25rem)}
+  .btn{border:1px solid var(--border);background:transparent;color:var(--fg);padding:.5rem .8rem;border-radius:10px;cursor:pointer}
+  .btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+  .btn:active{transform:translateY(1px)}
+  main{max-width:1200px;margin:1rem auto;padding:0 1rem}
+  .grid{display:grid;gap:1rem;grid-template-columns:1fr}
+  @media (min-width:1024px){ .grid{grid-template-columns:1fr 1fr} }
+  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1rem}
+  .legend{font-weight:700;margin-bottom:.6rem;display:flex;gap:.5rem;align-items:center}
+  .muted{color:var(--muted);font-size:.9rem}
+  .split{display:grid;gap:.75rem;grid-template-columns:1fr}
+  @media (min-width:640px){ .split{grid-template-columns:1fr 1fr} }
+  label{display:flex;justify-content:space-between;align-items:center;gap:.75rem;margin:.45rem 0}
+  input[type="number"], select{
+    width:140px;padding:.45rem .6rem;border-radius:10px;border:1px solid var(--border);
+    background:transparent;color:var(--fg)
+  }
+  input[type="range"]{width:100%}
+  .row{display:flex;flex-wrap:wrap;gap:.5rem}
+  .pill{display:inline-flex;align-items:center;gap:.35rem;border:1px solid var(--border);padding:.25rem .55rem;border-radius:999px}
+  .ok{background:color-mix(in srgb,var(--green) 22%, transparent)}
+  .warn{background:color-mix(in srgb,var(--amber) 22%, transparent)}
+  .bad{background:color-mix(in srgb,var(--red) 22%, transparent)}
+  .box{display:grid;grid-template-columns:auto 1fr;gap:.3rem .75rem;font-size:.92rem}
+  .k{color:var(--muted)}
+  canvas{background:var(--card);border:1px solid var(--border);border-radius:14px}
+  .title{font-weight:700;margin:.2rem 0 .6rem}
+  .hr{height:1px;background:var(--border);margin:.6rem 0}
+  .notice{font-size:.85rem;border-left:3px solid var(--violet);padding:.5rem .75rem;background:color-mix(in srgb,var(--violet) 12%, transparent);border-radius:8px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Simulador — Viabilidade da Vida (Carbono & Alternativas)</h1>
+  <div class="row">
+    <button id="btnTheme" class="btn" type="button">🌗 Tema</button>
+    <button id="btnShare" class="btn" type="button">🔗 Compartilhar</button>
+    <button id="btnRun" class="btn primary" type="button">▶️ Avaliar</button>
+  </div>
+</header>
+
+<main>
+  <section class="grid">
+    <div class="card">
+      <div class="legend">1) Constantes fundamentais (ajuste fino)</div>
+      <div class="split">
+        <div>
+          <label title="Constante de estrutura fina (α ≈ 1/137)">
+            <span>α (estrutura fina)</span>
+            <input id="alpha" type="number" step="0.00001" value="0.007297" />
+          </label>
+          <label title="Razão massa elétron / próton (≈ 1/1836)">
+            <span>μ = mₑ/mₚ</span>
+            <input id="mu" type="number" step="0.00001" value="0.000544" />
+          </label>
+          <label title="Diferença de massa nêutron-próton (MeV) ≈ 1.293">
+            <span>Δ(mₙ−mₚ) [MeV]</span>
+            <input id="dMnp" type="number" step="0.001" value="1.293" />
+          </label>
+          <label title="Escala efetiva da força forte (1 = nossa)">
+            <span>Força forte (x)</span>
+            <input id="strong" type="number" step="0.01" value="1.00" />
+          </label>
+          <label title="Escala efetiva da gravidade (1 = nossa)">
+            <span>Gravidade G (x)</span>
+            <input id="Gscale" type="number" step="0.01" value="1.00" />
+          </label>
+        </div>
+        <div>
+          <label title="Probabilidade de variação aleatória aplicada nas entradas">
+            <span>Acaso (ruído) %</span>
+            <input id="rng" type="number" step="1" value="0" />
+          </label>
+          <label title="Puxa valores para a faixa habitável (metaparámetro educacional)">
+            <span>Direcionamento (“Deus”) %</span>
+            <input id="bias" type="number" step="1" value="0" />
+          </label>
+          <label title="Quão estreitas são as janelas de ajuste fino (0 = tolerante, 1 = muito estrito)">
+            <span>Sensibilidade (0–1)</span>
+            <input id="tight" type="number" step="0.05" value="0.7" />
+          </label>
+          <div class="notice">
+            Estas janelas são <b>heurísticas plausíveis</b> para ensino. Não substituem química quântica real.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="legend">2) Cosmologia mínima e tempo disponível</div>
+      <div class="split">
+        <div>
+          <label><span>Ωm (matéria)</span><input id="Om" type="number" step="0.01" value="0.30"/></label>
+          <label><span>Ωr (radiação)</span><input id="Or" type="number" step="0.0001" value="0.0001"/></label>
+          <label><span>ΩΛ (energia escura)</span><input id="OL" type="number" step="0.01" value="0.70"/></label>
+          <label><span>H₀ (km/s/Mpc)</span><input id="H0" type="number" step="1" value="70"/></label>
+        </div>
+        <div>
+          <label title="Tempo efetivo útil para química/evolução">
+            <span>Tempo disponível (Gyr)</span>
+            <input id="age" type="number" step="0.5" value="14"/>
+          </label>
+          <div class="box" style="margin-top:.4rem">
+            <div class="k">Ωk (curvatura)</div><div id="okShow">—</div>
+            <div class="k">Checagens cosmológicas</div><div id="cosmoChk">—</div>
+          </div>
+          <div class="muted" style="margin-top:.4rem">
+            Critérios: matéria suficiente para estruturas, Λ não “estrangula” galáxias cedo, idade ≥ 5 Gyr para evolução lenta.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="grid">
+    <div class="card">
+      <div class="legend">3) Ambiente planetário</div>
+      <div class="split">
+        <div>
+          <label><span>Temperatura superficial (K)</span><input id="T" type="number" step="1" value="288"/></label>
+          <label><span>Pressão superficial (bar)</span><input id="P" type="number" step="0.01" value="1.0"/></label>
+          <label>
+            <span>Solvente principal</span>
+            <select id="solvent">
+              <option value="H2O">Água (H₂O)</option>
+              <option value="NH3">Amônia (NH₃)</option>
+              <option value="CH4">Metano (CH₄)</option>
+              <option value="C2H6">Etano (C₂H₆)</option>
+              <option value="CO2sc">CO₂ supercrítico</option>
+            </select>
+          </label>
+          <label title="Radiação estelar ionizante relativa (1 = Terra)">
+            <span>Ambiente UV/X (x)</span><input id="uv" type="number" step="0.1" value="1.0"/>
+          </label>
+        </div>
+        <div>
+          <div class="title">Janelas aproximadas de líquido (1 bar):</div>
+          <div class="box">
+            <div class="k">Água</div><div>273–373 K</div>
+            <div class="k">Amônia</div><div>195–240 K</div>
+            <div class="k">Metano</div><div> 90–112 K</div>
+            <div class="k">Etano</div><div> 90–185 K</div>
+            <div class="k">CO₂ (supercrítico)</div><div> T≥304 K e P≥73 bar</div>
+          </div>
+          <div class="muted" style="margin-top:.4rem">
+            Faixas de referência em 1 bar; sob outras pressões as fronteiras mudam. UV alto destrói moléculas frágeis.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="legend">4) Resultado & Diagnóstico</div>
+      <div class="row" style="margin-bottom:.5rem">
+        <span id="lifeC" class="pill">Carbono: —</span>
+        <span id="lifeAlt" class="pill">Vida alternativa: —</span>
+      </div>
+      <div class="box" id="diag"></div>
+      <div class="hr"></div>
+      <div class="title">Componentes (0–100)</div>
+      <div style="position:relative;height:320px">
+        <canvas id="chart"></canvas>
+      </div>
+      <div class="muted" style="margin-top:.5rem">
+        Pontuações são agregadas de subcritérios físicos, cosmológicos e ambientais (educacionais).
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+/* ===== Tema ===== */
+(function(){
+  const root = document.documentElement;
+  const saved = localStorage.getItem('theme') || 'dark';
+  root.setAttribute('data-theme', saved);
+  document.getElementById('btnTheme').addEventListener('click', ()=>{
+    const now = root.getAttribute('data-theme')==='dark'?'light':'dark';
+    root.setAttribute('data-theme', now);
+    localStorage.setItem('theme', now);
+  });
+})();
+
+/* ===== Leitura / ajuda ===== */
+const $ = (s)=>document.querySelector(s);
+function readFlo(id){ return parseFloat($(id).value); }
+function setTxt(id, txt){ $(id).textContent = txt; }
+function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
+function rnd(){ return Math.random()*2-1; }
+
+/* ===== Acaso & Direcionamento ===== */
+function nudge(value, target, noisePct, biasPct){
+  const v = value*(1 + (noisePct/100)*rnd());
+  const b = value + (biasPct/100)*(target - value);
+  return (noisePct>0 || biasPct>0) ? (0.5*v + 0.5*b) : value;
+}
+
+/* ===== Heurísticas científicas (janelas) =====
+   Renomeado: window -> winRange (evita conflito com objeto global window).
+*/
+function winRange(val, center, relSpan, tight){
+  const span = relSpan * (1 - 0.6*tight);
+  const lo = center*(1-span), hi = center*(1+span);
+  if(val<lo || val>hi) return 0;
+  const d = Math.abs((val-center)/(center*span));
+  return clamp(1 - d*d, 0, 1);
+}
+
+/* ===== Cosmologia mínima ===== */
+function cosmosChecks(Om, Or, OL, ageGyr){
+  const Ok = 1 - (Om+Or+OL);
+  const hasMatter = Om >= 0.05 ? 1 : 0;
+  const lambdaNotTooHigh = OL <= 0.9 ? 1 : 0;
+  const ageOK = ageGyr >= 5 ? 1 : 0;
+  const score = (hasMatter + lambdaNotTooHigh + ageOK)/3;
+  const notes = [];
+  if(!hasMatter) notes.push("Matéria insuficiente para formar galáxias.");
+  if(!lambdaNotTooHigh) notes.push("Energia escura muito alta: estruturas cortadas cedo.");
+  if(!ageOK) notes.push("Tempo disponível muito curto (<5 Gyr).");
+  return {Ok, score, notes};
+}
+
+/* ===== Química & Átomos (educacional) ===== */
+function atomicChemScores(alpha, mu, dMnpMeV, strongScale, tight){
+  const alpha0 = 1/137.035999;
+  const mu0 = 1/1836.152673;
+  const dM0 = 1.293;
+  const s0 = 1.0;
+
+  const sAlpha = winRange(alpha, alpha0, 0.18, tight);
+  const sMu    = winRange(mu,    mu0,    0.35, tight);
+  const sDM    = winRange(dMnpMeV, dM0,  0.45, tight);
+  const sStrong= winRange(strongScale, s0, 0.05, tight);
+
+  const notes=[];
+  if(sAlpha===0) notes.push("α fora do intervalo: ligações eletrônicas instáveis.");
+  if(sMu===0) notes.push("mₑ/mₚ fora do intervalo: orbitais/química alteradas demais.");
+  if(sDM===0) notes.push("Δ(mₙ−mₚ) fora do intervalo: estabilidade nuclear comprometida.");
+  if(sStrong===0) notes.push("Força forte fora do ajuste fino: carbono/oxigênio suprimidos.");
+
+  const atomScore = 0.35*sAlpha + 0.25*sMu + 0.25*sDM + 0.15*sStrong;
+  const carbonOK = (sStrong>0.25);
+
+  return { atomScore, carbonOK, notes, pieces:{sAlpha,sMu,sDM,sStrong} };
+}
+
+/* ===== Estrelas (gravidade) ===== */
+function stellarScore(Gscale, tight){
+  const sG = winRange(Gscale, 1.0, 0.5, tight);
+  const notes=[];
+  if(sG===0 && Gscale>1.0) notes.push("G alto: estrelas vivem pouco (milhões de anos).");
+  if(sG===0 && Gscale<1.0) notes.push("G baixo: ignição nuclear dificultada.");
+  return { sG, notes };
+}
+
+/* ===== Solventes e ambiente ===== */
+function solventWindow(solvent, T, P){
+  let ok=0, msg=""; 
+  if(solvent==='H2O'){ ok = (T>=273 && T<=373 && P>=0.006) ? 1:0; msg="Água líquida 273–373 K @ ≥0.006 bar"; }
+  if(solvent==='NH3'){ ok = (T>=195 && T<=240) ? 1:0; msg="Amônia líquida 195–240 K @ ~1 bar"; }
+  if(solvent==='CH4'){ ok = (T>=90 && T<=112)  ? 1:0; msg="Metano líquido 90–112 K @ ~1 bar"; }
+  if(solvent==='C2H6'){ ok = (T>=90 && T<=185) ? 1:0; msg="Etano líquido 90–185 K @ ~1 bar"; }
+  if(solvent==='CO2sc'){ ok = (T>=304 && P>=73) ? 1:0; msg="CO₂ supercrítico T≥304 K & P≥73 bar"; }
+  return {ok, msg};
+}
+function uvPenalty(uv){
+  const p = 1/(1+Math.exp(-(2-uv)));
+  return clamp(1.2 - 0.2*p, 0.6, 1);
+}
+
+/* ===== Agregação de viabilidade ===== */
+function evaluateAll(params){
+  const {alpha, mu, dMnp, strong, Gscale, Om, Or, OL, age, T, P, solvent, uv, tight} = params;
+
+  const cos = cosmosChecks(Om,Or,OL,age);
+  const atc = atomicChemScores(alpha, mu, dMnp, strong, tight);
+  const st  = stellarScore(Gscale, tight);
+  const env = solventWindow(solvent, T, P);
+  const uvk = uvPenalty(uv);
+
+  const S_atoms   = Math.round(100*atc.atomScore);
+  const S_stars   = Math.round(100*st.sG);
+  const S_cosmos  = Math.round(100*cos.score);
+  const S_solvent = Math.round(100*(env.ok?1:0)*uvk);
+
+  let carbonScore = 0.35*S_atoms + 0.20*S_stars + 0.25*S_cosmos + 0.20*(solvent==='H2O'?S_solvent:0);
+  if(!atc.carbonOK) carbonScore = Math.min(carbonScore, 35);
+  carbonScore = Math.round(clamp(carbonScore, 0, 100));
+
+  const altSolvOK = (solvent!=='H2O' && env.ok);
+  const alpha0 = 1/137.035999;
+  const alphaDev = Math.abs(alpha-alpha0)/alpha0;
+  let altScore = 0.30*S_atoms + 0.15*S_stars + 0.25*S_cosmos + 0.30*(altSolvOK?S_solvent:0);
+  if(alphaDev>0.5) altScore *= 0.6;
+  altScore = Math.round(clamp(altScore, 0, 100));
+
+  function tag(score, carbon=false){
+    if(score>=70) return {txt: (carbon?'Carbono plausível 🌱':'Alternativa plausível ⚡'), cls:'ok'};
+    if(score>=40) return {txt: 'Marginal / incerta ⚠️', cls:'warn'};
+    return {txt:'Improvável ❌', cls:'bad'};
+  }
+  const carbonTag = tag(carbonScore,true);
+  const altTag    = tag(altScore,false);
+
+  const diag = [];
+  if(atc.notes.length) diag.push(...atc.notes);
+  if(st.notes.length)  diag.push(...st.notes);
+  if(!env.ok) diag.push(`Solvente fora da faixa: ${env.msg}.`);
+  if(cos.notes.length) diag.push(...cos.notes);
+  if(diag.length===0) diag.push("Parâmetros coerentes; química e ambiente plausíveis.");
+
+  return {
+    Ok: cos.Ok,
+    subs: {S_atoms,S_stars,S_cosmos,S_solvent},
+    carbon: {score:carbonScore, ...carbonTag},
+    alt:    {score:altScore,    ...altTag},
+    diag
+  };
+}
+
+/* ===== Chart helper ===== */
+let chart;
+function renderChart(subs){
+  const ctx = document.getElementById('chart').getContext?.('2d');
+  if(!ctx || !window.Chart){ return; }
+  const data = {
+    labels:['Química/Átomos','Estrelas (G)','Cosmologia','Solvente/UV'],
+    datasets:[{
+      label:'Componentes',
+      data:[subs.S_atoms, subs.S_stars, subs.S_cosmos, subs.S_solvent],
+      borderColor:getComputedStyle(document.documentElement).getPropertyValue('--blue').trim(),
+      backgroundColor:'transparent',
+      pointRadius:3,
+      tension:.18
+    }]
+  };
+  const options = {
+    responsive:true, maintainAspectRatio:false,
+    scales:{
+      y:{min:0,max:100, ticks:{color:getComputedStyle(document.documentElement).getPropertyValue('--muted').trim()},
+         title:{display:true,text:'0–100',color:getComputedStyle(document.documentElement).getPropertyValue('--muted').trim()}},
+      x:{ticks:{color:getComputedStyle(document.documentElement).getPropertyValue('--muted').trim()}}
+    },
+    plugins:{legend:{labels:{color:getComputedStyle(document.documentElement).getPropertyValue('--fg').trim()}}}
+  };
+  if(chart) chart.destroy();
+  chart = new Chart(ctx, {type:'line', data, options});
+}
+
+/* ===== Execução ===== */
+function currentParams(){
+  const targets = { alpha:0.00729735, mu:1/1836.152673, dMnp:1.293, strong:1.0, Gscale:1.0,
+                    Om:0.30, Or:0.0001, OL:0.70, age:14, T:288, P:1.0, uv:1.0 };
+  const noise = clamp(readFlo('#rng'),0,100);
+  const bias  = clamp(readFlo('#bias'),0,100);
+
+  let alpha = readFlo('#alpha');
+  let mu    = readFlo('#mu');
+  let dMnp  = readFlo('#dMnp');
+  let strong= readFlo('#strong');
+  let Gs    = readFlo('#Gscale');
+  let Om    = readFlo('#Om');
+  let Or    = readFlo('#Or');
+  let OL    = readFlo('#OL');
+  let H0    = readFlo('#H0');
+  let age   = readFlo('#age');
+  let T     = readFlo('#T');
+  let P     = readFlo('#P');
+  let solvent = document.getElementById('solvent').value;
+  let uv    = readFlo('#uv');
+  let tight = clamp(readFlo('#tight'),0,1);
+
+  alpha = nudge(alpha, targets.alpha, noise, bias);
+  mu    = nudge(mu,    targets.mu,    noise, bias);
+  dMnp  = nudge(dMnp,  targets.dMnp,  noise, bias);
+  strong= nudge(strong,targets.strong,noise, bias);
+  Gs    = nudge(Gs,    targets.Gscale,noise, bias);
+  Om    = nudge(Om,    targets.Om,    noise, bias);
+  Or    = nudge(Or,    targets.Or,    noise, bias);
+  OL    = nudge(OL,    targets.OL,    noise, bias);
+  age   = nudge(age,   targets.age,   noise, bias);
+  T     = nudge(T,     targets.T,     noise, bias);
+  P     = nudge(P,     targets.P,     noise, bias);
+  uv    = nudge(uv,    targets.uv,    noise, bias);
+
+  const Ok = 1 - (Om+Or+OL);
+  setTxt('#okShow', Ok.toFixed(6).replace('.',','));
+
+  return {alpha,mu,dMnp,strong,Gscale:Gs,Om,Or,OL,H0,age,T,P,solvent,uv,tight};
+}
+
+function classifyPill(el, info){
+  el.className='pill';
+  if(info.cls==='ok') el.classList.add('ok');
+  if(info.cls==='warn') el.classList.add('warn');
+  if(info.cls==='bad') el.classList.add('bad');
+  el.textContent = `${el.id==='lifeC'?'Carbono':'Vida alternativa'}: ${info.txt} — ${info.score}/100`;
+}
+
+function run(){
+  const p = currentParams();
+  const res = evaluateAll(p);
+  setTxt('#cosmoChk', res.subs.S_cosmos>=67?'OK':'Limitações (veja diagnóstico)');
+  classifyPill(document.getElementById('lifeC'), res.carbon);
+  classifyPill(document.getElementById('lifeAlt'), res.alt);
+  const d = document.getElementById('diag'); d.innerHTML = '';
+  res.diag.forEach(msg=>{
+    const a = document.createElement('div');
+    a.textContent = '• ' + msg; d.appendChild(a);
+  });
+  renderChart(res.subs);
+}
+
+/* ===== Compartilhar estado ===== */
+function encodeState(){
+  const s = {
+    alpha:document.getElementById('alpha').value, mu:document.getElementById('mu').value, dMnp:document.getElementById('dMnp').value,
+    strong:document.getElementById('strong').value, Gscale:document.getElementById('Gscale').value,
+    Om:document.getElementById('Om').value, Or:document.getElementById('Or').value, OL:document.getElementById('OL').value, H0:document.getElementById('H0').value, age:document.getElementById('age').value,
+    T:document.getElementById('T').value, P:document.getElementById('P').value, solvent:document.getElementById('solvent').value, uv:document.getElementById('uv').value,
+    rng:document.getElementById('rng').value, bias:document.getElementById('bias').value, tight:document.getElementById('tight').value
+  };
+  return encodeURIComponent(JSON.stringify(s));
+}
+function decodeState(q){
+  try{
+    const s = JSON.parse(decodeURIComponent(q));
+    for(const k in s){ const el = document.getElementById(k); if(el) el.value = s[k]; }
+  }catch(e){}
+}
+document.getElementById('btnShare').addEventListener('click', ()=>{
+  const url = `${location.origin}${location.pathname}#${encodeState()}`;
+  navigator.clipboard?.writeText(url);
+  alert('Link copiado! Cole para compartilhar seu cenário.');
+});
+if(location.hash?.length>1){ decodeState(location.hash.slice(1)); }
+
+/* ===== Eventos ===== */
+document.getElementById('btnRun').addEventListener('click', run);
+['alpha','mu','dMnp','strong','Gscale','Om','Or','OL','H0','age','T','P','solvent','uv','rng','bias','tight']
+  .forEach(id=> document.getElementById(id).addEventListener('input', ()=>{}));
+
+// Primeira avaliação
+run();
+</script>
+</body>
+</html>
